@@ -39,7 +39,7 @@ def get_source(url):
         with urlopen(url) as source:
             return source.read().decode(errors="ignore")
     except Exception as error:
-        print(error, file=stderr)
+        print(error, "\n", sep="", file=stderr)
         return None
 
 
