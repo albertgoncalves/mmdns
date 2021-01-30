@@ -45,12 +45,14 @@ def parse_link(element):
 
 def parse_schedule(team, year, row):
     date = row.find("td", {"data-stat": "date_game"})
+    if (game_link := date.find("a")) is not None:
+        game_link = "{}{}".format(URL["base"], game_link["href"])
     opp = parse_link(row.find("td", {"data-stat": "opp_name"}))
     conf = parse_link(row.find("td", {"data-stat": "conf_abbr"}))
     return {
         "year": year,
         "date": date["csk"],
-        "game_link": "{}{}".format(URL["base"], date.find("a")["href"]),
+        "game_link": game_link,
         "time": row.find("td", {"data-stat": "time_game"}).text,
         "type": row.find("td", {"data-stat": "game_type"}).text,
         "seq": int(row.find("th").text),
