@@ -16,8 +16,9 @@ FILENAME = {
 URL = {
     "base": "https://www.sports-reference.com",
     "teams": "{}/cbb/schools/",
+    "schedule": "{}{}-schedule.html",
 }
-YEARS = [2019]
+YEARS = [2018, 2019]
 SLEEP_SECONDS = 2
 
 
@@ -68,7 +69,7 @@ def main():
             print(year, team["id"], file=stderr)
             cache(
                 FILENAME["schedule"].format(year, team["id"]),
-                lambda: get_source("{}{}-schedule.html".format(
+                lambda: get_source(URL["schedule"].format(
                     team["link"],
                     year,
                 )),
