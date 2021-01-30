@@ -18,7 +18,7 @@ URL = {
     "teams": "{}/cbb/schools/",
     "schedule": "{}{}-schedule.html",
 }
-YEARS = [2018, 2019]
+YEARS = [2017, 2018, 2019]
 SLEEP_SECONDS = 2
 
 
