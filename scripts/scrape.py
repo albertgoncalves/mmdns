@@ -42,10 +42,6 @@ def get_source(url):
         return None
 
 
-def get_team_id(href):
-    return href.rstrip("/").rsplit("/", 1)[1]
-
-
 def get_teams():
     source = cache(
         FILENAME["teams"],
@@ -58,7 +54,7 @@ def get_teams():
         html.find_all("th", {"scope": "row"}),
     ):
         results.append({
-            "id": get_team_id(row["href"]),
+            "id": row["href"].rstrip("/").rsplit("/", 1)[-1],
             "link": "{}{}".format(URL["base"], row["href"]),
             "name": row.text,
         })
@@ -69,7 +65,7 @@ def main():
     teams = get_teams()
     for year in YEARS:
         for team in teams:
-            print(team["name"], file=stderr)
+            print(year, team["id"], file=stderr)
             cache(
                 FILENAME["schedule"].format(year, team["id"]),
                 lambda: get_source("{}{}-schedule.html".format(

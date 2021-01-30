@@ -25,30 +25,28 @@ PATTERN = {
 }
 
 
-def null_str(x):
+def nullable(x):
     if x == "":
         return None
     return x
 
 
-def get_name_link(element):
-    link = element.find("a")
-    if link is not None:
-        return (link.text, "{}{}".format(URL["base"], link["href"]))
-    else:
-        return (element.text, None)
-
-
-def get_team_id(link):
-    return link.rsplit("/", 2)[1]
+def parse_link(element):
+    if (link := element.find("a")) is not None:
+        return {
+            "name": link.text,
+            "id": link["href"].rsplit("/", 2)[-2],
+            "link": "{}{}".format(URL["base"], link["href"]),
+        }
+    return {
+        "name": element.text,
+    }
 
 
 def parse_schedule(team, year, row):
     date = row.find("td", {"data-stat": "date_game"})
-    (opp_name, opp_link) = \
-        get_name_link(row.find("td", {"data-stat": "opp_name"}))
-    (conf_name, conf_link) = \
-        get_name_link(row.find("td", {"data-stat": "conf_abbr"}))
+    opp = parse_link(row.find("td", {"data-stat": "opp_name"}))
+    conf = parse_link(row.find("td", {"data-stat": "conf_abbr"}))
     return {
         "year": year,
         "date": date["csk"],
@@ -58,15 +56,17 @@ def parse_schedule(team, year, row):
         "seq": int(row.find("th").text),
         "venue": row.find("td", {"data-stat": "arena"}).text,
         "team_id": team,
-        "loc": null_str(row.find("td", {"data-stat": "game_location"}).text),
-        "opp_team_name": opp_name,
-        "opp_team_id": None if opp_link is None else get_team_id(opp_link),
-        "conf_name": conf_name,
-        "conf_link": conf_link,
+        "loc": nullable(row.find("td", {"data-stat": "game_location"}).text),
+        "opp_team_name": opp["name"],
+        "opp_team_id": opp.get("id", None),
+        "opp_team_link": opp.get("link", None),
+        "conf_name": conf["name"],
+        "conf_id": conf.get("id", None),
+        "conf_link": conf.get("link", None),
         "result": row.find("td", {"data-stat": "game_result"}).text,
         "score": int(row.find("td", {"data-stat": "pts"}).text),
         "opp_score": int(row.find("td", {"data-stat": "opp_pts"}).text),
-        "overtime": null_str(row.find("td", {"data-stat": "overtimes"}).text),
+        "overtime": nullable(row.find("td", {"data-stat": "overtimes"}).text),
         "cum_wins": int(row.find("td", {"data-stat": "wins"}).text),
         "cum_losses": int(row.find("td", {"data-stat": "losses"}).text),
     }
@@ -88,15 +88,10 @@ def get_schedule(filename, team, year):
     return results
 
 
-def flatten(xs):
-    return [item for sublist in xs for item in sublist]
-
-
 def main():
     payloads = []
     for filename in glob(GLOB["schedule"]):
-        match = PATTERN["schedule"].match(filename)
-        if match is not None:
+        if (match := PATTERN["schedule"].match(filename)) is not None:
             year = int(match.group(1))
             team = match.group(2)
             payloads.append((filename, team, year))
@@ -105,8 +100,12 @@ def main():
             exit(1)
     with Pool(SIZE_POOL) as pool:
         results = pool.starmap(get_schedule, payloads)
-    results = flatten(filter(lambda x: x is not None, results))
-    DataFrame(results).to_csv(FILENAME["schedule"], index=False)
+    results = DataFrame([
+        item
+        for sublist in filter(lambda x: x is not None, results)
+        for item in sublist
+    ])
+    results.to_csv(FILENAME["schedule"], index=False)
 
 
 if __name__ == "__main__":
