@@ -2,7 +2,8 @@
 !.gitignore
 !*.nix
 !.shellhook
-!scripts/
 !*.py
-!model/
 !*.sh
+!*.stan
+!scripts/
+!model/
