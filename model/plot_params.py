@@ -15,15 +15,15 @@ FILENAME = {
     "params": join(environ["WD"], "out", "params_{}.png"),
 }
 TEAM_IDS = {
-    2019: [
-        "auburn",
-        "duke",
+    2017: [
+        "florida",
         "gonzaga",
+        "kansas",
         "kentucky",
-        "michigan-state",
-        "purdue",
-        "texas-tech",
-        "virginia",
+        "north-carolina",
+        "oregon",
+        "south-carolina",
+        "xavier",
     ],
     2018: [
         "duke",
@@ -35,15 +35,15 @@ TEAM_IDS = {
         "texas-tech",
         "villanova",
     ],
-    2017: [
-        "florida",
+    2019: [
+        "auburn",
+        "duke",
         "gonzaga",
-        "kansas",
         "kentucky",
-        "north-carolina",
-        "oregon",
-        "south-carolina",
-        "xavier",
+        "michigan-state",
+        "purdue",
+        "texas-tech",
+        "virginia",
     ],
 }
 
