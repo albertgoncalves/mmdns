@@ -15,7 +15,7 @@ from scrape import URL
 
 SIZE_POOL = 3
 FILENAME = {
-    "schedule": join(environ["WD"], "out", "schedule.csv"),
+    "schedule": join(environ["WD"], "out", "data_schedule.csv"),
 }
 GLOB = {
     "schedule": join(environ["WD"], "out", "schedule_*.pkl"),

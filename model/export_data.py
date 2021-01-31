@@ -8,14 +8,19 @@ from sys import argv
 from numpy import nan
 from pandas import read_csv, to_datetime
 
-WD = environ["WD"]
+import unpack
+
 DATE_FORMAT = "%Y-%m-%d"
+FILENAME = {
+    "team_ids": join(environ["WD"], "out", "team_ids_{}.json"),
+    "data": join(environ["WD"], "out", "data_{}.json"),
+}
 
 
 def main():
     assert len(argv) == 2
     year = int(argv[1])
-    df = read_csv(join(WD, "out", "schedule.csv"))
+    df = read_csv(unpack.FILENAME["schedule"])
     df = df.loc[(df.year == year) & (df.type == "REG")].copy()
     # NOTE: If we don't have an `id` for `opp`, let's just purge it for now to
     # keep things simple.
@@ -27,7 +32,7 @@ def main():
         team_id: i + 1
         for (i, team_id) in enumerate(sorted(df.team_id.unique()))
     }
-    with open(join(WD, "out", "team_ids_{}.json".format(year)), "w") as file:
+    with open(FILENAME["team_ids"].format(year), "w") as file:
         dump(team_ids, file)
     df.team_id = df.team_id.map(team_ids)
     df.opp_team_id = df.opp_team_id.map(team_ids)
@@ -64,7 +69,7 @@ def main():
         "team_2_score": df.opp_score.tolist(),
         "team_2_home": df.opp_team_home.astype("int32").tolist(),
     }
-    with open(join(WD, "out", "data_{}.json".format(year)), "w") as file:
+    with open(FILENAME["data"].format(year), "w") as file:
         dump(data, file)
 
 

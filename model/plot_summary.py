@@ -9,7 +9,10 @@ from matplotlib.pyplot import close, savefig, subplots, tight_layout
 from numpy import mean, median
 from pandas import read_csv
 
-WD = environ["WD"]
+FILENAME = {
+    "samples": join(environ["WD"], "out", "samples_{}.csv"),
+    "summary": join(environ["WD"], "out", "summary_{}.png"),
+}
 
 
 def plot(ax, samples, column):
@@ -28,10 +31,7 @@ def plot(ax, samples, column):
 def main():
     assert len(argv) == 2
     year = int(argv[1])
-    samples = read_csv(
-        join(WD, "out", "samples_{}.csv".format(year)),
-        low_memory=False,
-    )
+    samples = read_csv(FILENAME["samples"].format(year), low_memory=False)
     samples = samples[[
         column for column in samples.columns if column.endswith("__")
     ]].copy()
@@ -48,7 +48,7 @@ def main():
             else:
                 axs[i, j].set_axis_off()
     tight_layout()
-    savefig(join(WD, "out", "summary_{}.png".format(year)))
+    savefig(FILENAME["summary"].format(year))
     close()
 
 

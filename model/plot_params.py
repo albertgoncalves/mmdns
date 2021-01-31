@@ -8,7 +8,12 @@ from sys import argv
 from matplotlib.pyplot import close, savefig, subplots, tight_layout
 from pandas import DataFrame, read_csv
 
-WD = environ["WD"]
+import export_data
+import plot_summary
+
+FILENAME = {
+    "params": join(environ["WD"], "out", "params_{}.png"),
+}
 TEAM_IDS = {
     2019: [
         "auburn",
@@ -46,10 +51,10 @@ TEAM_IDS = {
 def main():
     assert len(argv) == 2
     year = int(argv[1])
-    with open(join(WD, "out", "team_ids_{}.json".format(year)), "r") as file:
+    with open(export_data.FILENAME["team_ids"].format(year), "r") as file:
         team_ids = {value: key for (key, value) in load(file).items()}
     samples = read_csv(
-        join(WD, "out", "samples_{}.csv".format(year)),
+        plot_summary.FILENAME["samples"].format(year),
         low_memory=False,
     )
     params = {}
@@ -126,7 +131,7 @@ def main():
     ax.set_xlabel("attack")
     ax.set_ylabel("defense")
     tight_layout()
-    savefig(join(WD, "out", "params_{}.png".format(year)))
+    savefig(FILENAME["params"].format(year))
     close()
 
 
