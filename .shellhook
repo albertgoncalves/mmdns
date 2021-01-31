@@ -2,8 +2,10 @@
 
 export WD=$PWD
 
-if [ ! -d "$WD/out" ]; then
-    mkdir "$WD/out"
-fi
+for x in build out; do
+    if [ ! -d "$WD/$x" ]; then
+        mkdir "$WD/$x"
+    fi
+done
 
 alias csvlook="csvlook --no-inference"
