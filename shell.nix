@@ -8,6 +8,7 @@ mkShell {
             pandas
         ]))
         csvkit
+        feh
         jq
         shellcheck
     ];
