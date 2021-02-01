@@ -3,6 +3,7 @@
 from math import ceil
 from os import environ
 from os.path import join
+from random import sample
 from sys import argv
 
 from matplotlib.pyplot import close, savefig, subplots, tight_layout
@@ -17,7 +18,7 @@ FILENAME = {
 
 def plot(ax, samples, column):
     ax.set_title(column)
-    ax.plot(samples[column], color="black", alpha=0.25)
+    ax.plot(samples[column], color="black", alpha=0.35)
     x = median(samples[column])
     kwargs = {
         "ls": "--",
@@ -32,12 +33,18 @@ def main():
     assert len(argv) == 2
     year = int(argv[1])
     samples = read_csv(FILENAME["samples"].format(year), low_memory=False)
-    samples = samples[[
-        column for column in samples.columns if column.endswith("__")
-    ]].copy()
-    n = len(samples.columns)
+    n = 20
     w = 4
     h = ceil(n / w)
+    if n < len(samples.columns):
+        columns = \
+            [column for column in samples.columns if column.endswith("__")]
+        m = len(columns)
+        assert m < n
+        samples = samples[columns + sample([
+            column for column in samples.columns if not column.endswith("__")
+        ], n - m)].copy()
+        assert len(samples.columns) == n
     (_, axs) = subplots(h, w, figsize=(18, 10))
     for i in range(h):
         iw = i * w
