@@ -23,7 +23,7 @@ model {
     vector[n_games] theta_1;
     vector[n_games] theta_2;
 
-    home ~ normal(0.0, 0.01);
+    home ~ normal(0.0, 0.1);
 
     mu_att ~ normal(0.0, 0.1);
     mu_def ~ normal(0.0, 0.1);

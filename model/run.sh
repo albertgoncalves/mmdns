@@ -67,7 +67,7 @@ export CXXFLAGS="${flags[*]}"
         "$WD/build/model" \
             sample \
             num_warmup=1000 \
-            num_samples=4000 \
+            num_samples=2000 \
             data file="$WD/out/data_$x.json" \
             output file="$WD/out/output_$x.csv"
         "$WD/cmdstan/bin/stansummary" "$WD/out/output_$x.csv"
