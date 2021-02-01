@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eux
+set -eu
 
 if [ ! -d "$WD/cmdstan" ]; then
     (
