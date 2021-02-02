@@ -37,12 +37,14 @@ def main():
     w = 4
     h = ceil(n / w)
     if n < len(samples.columns):
-        columns = \
-            [column for column in samples.columns if column.endswith("__")]
+        columns = [
+            column for column in samples.columns
+            if column.endswith("__") or ("." not in column)
+        ]
         m = len(columns)
         assert m < n
         samples = samples[columns + sample([
-            column for column in samples.columns if not column.endswith("__")
+            column for column in samples.columns if "." in column
         ], n - m)].copy()
         assert len(samples.columns) == n
     (_, axs) = subplots(h, w, figsize=(18, 10))

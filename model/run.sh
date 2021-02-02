@@ -70,7 +70,7 @@ export CXXFLAGS="${flags[*]}"
             num_samples=1000 \
             data file="$WD/out/data_$x.json" \
             output file="$WD/out/output_$x.csv"
-        "$WD/cmdstan/bin/stansummary" "$WD/out/output_$x.csv"
+        "$WD/cmdstan/bin/stansummary" "$WD/out/output_$x.csv" | less
         grep -v "#" "$WD/out/output_$x.csv" > "$WD/out/samples_$x.csv"
         "$WD/model/plot_summary.py" "$x"
         feh "$WD/out/summary_$x.png"
