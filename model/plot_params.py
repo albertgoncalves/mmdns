@@ -96,12 +96,23 @@ def main():
         linewidth=0.5,
     )
     kwargs = {
-        "color": "k",
-        "alpha": 0.125,
+        "alpha": 0.35,
         "linestyle": "--",
     }
-    ax.axvline(samples[columns["att"]].values.mean(), **kwargs)
-    ax.axhline(samples[columns["def"]].values.mean(), **kwargs)
+    m = samples[columns["att"]].values.mean()
+    ax.axvline(
+        m,
+        label="att mean => {:.2f}".format(m),
+        c="dodgerblue",
+        **kwargs,
+    )
+    m = samples[columns["def"]].values.mean()
+    ax.axhline(
+        m,
+        label="def mean => {:.2f}".format(m),
+        c="tomato",
+        **kwargs,
+    )
     for (_, row) in params.iterrows():
         if row.team_id in TEAM_IDS[year]:
             ax.annotate(
@@ -120,6 +131,7 @@ def main():
         params.loc[rows, "def_mean"],
         params.loc[rows, "att_mean"] - params.loc[rows, "att_2_std"],
         params.loc[rows, "att_mean"] + params.loc[rows, "att_2_std"],
+        label="2 standard deviations",
         **kwargs,
     )
     ax.vlines(
@@ -130,6 +142,7 @@ def main():
     )
     ax.set_xlabel("attack")
     ax.set_ylabel("defense")
+    ax.legend(prop={"family": "monospace"})
     tight_layout()
     savefig(FILENAME["params"].format(year))
     close()
