@@ -58,25 +58,32 @@ export CXXFLAGS="${flags[*]}"
     fi
 )
 (
-    (
-        cd "$WD/cmdstan"
-        make "$WD/build/model"
-    )
+    cd "$WD/cmdstan"
+    make "$WD/build/model"
+)
+(
     for x in 2017 2018 2019; do
-        "$WD/model/export_data.py" "$x"
-        "$WD/build/model" \
-            sample \
-            num_warmup=1000 \
-            num_samples=1000 \
-            data file="$WD/out/data_$x.json" \
-            output file="$WD/out/output_$x.csv"
-        "$WD/cmdstan/bin/stansummary" "$WD/out/output_$x.csv" | less
-        grep -v "#" "$WD/out/output_$x.csv" > "$WD/out/samples_$x.csv"
-        "$WD/model/plot_summary.py" "$x"
+        (
+            "$WD/model/export_data.py" "$x"
+            "$WD/build/model" \
+                sample \
+                num_warmup=1000 \
+                num_samples=1000 \
+                data file="$WD/out/data_$x.json" \
+                output file="$WD/out/output_$x.csv"
+            grep -v "#" "$WD/out/output_$x.csv" > "$WD/out/samples_$x.csv"
+            "$WD/model/plot_summary.py" "$x"
+            "$WD/model/plot_params.py" "$x"
+            "$WD/model/plot_preds.py" "$x"
+            "$WD/cmdstan/bin/stansummary" "$WD/out/output_$x.csv" \
+                > "$WD/out/summary_$x.txt"
+        ) &
+    done
+    wait
+    for x in 2017 2018 2019; do
+        less "$WD/out/summary_$x.txt"
         feh "$WD/out/summary_$x.png"
-        "$WD/model/plot_params.py" "$x"
         feh "$WD/out/params_$x.png"
-        "$WD/model/plot_preds.py" "$x"
         feh "$WD/out/preds_$x.png"
     done
 )
