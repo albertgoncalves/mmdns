@@ -44,7 +44,8 @@ def main():
         m = len(columns)
         assert m < n
         samples = samples[columns + sample([
-            column for column in samples.columns if "." in column
+            column for column in samples.columns
+            if ("." in column) and ("_pred" not in column)
         ], n - m)].copy()
         assert len(samples.columns) == n
     (_, axs) = subplots(h, w, figsize=(18, 10))

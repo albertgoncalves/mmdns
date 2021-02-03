@@ -76,5 +76,7 @@ export CXXFLAGS="${flags[*]}"
         feh "$WD/out/summary_$x.png"
         "$WD/model/plot_params.py" "$x"
         feh "$WD/out/params_$x.png"
+        "$WD/model/plot_preds.py" "$x"
+        feh "$WD/out/preds_$x.png"
     done
 )
