@@ -4,9 +4,9 @@ set -eu
 
 if [ ! -d "$WD/cmdstan" ]; then
     (
-        cd "$WD" || exit 1
+        cd "$WD"
         git clone https://github.com/stan-dev/cmdstan.git --recursive
-        cd "$WD/cmdstan" || exit 1
+        cd "$WD/cmdstan"
         make build
     )
 fi
