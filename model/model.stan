@@ -18,10 +18,10 @@ parameters {
 }
 
 model {
-    home ~ normal(0.0, 0.1);
+    home ~ normal(0.0, 1.0);
     mu_offset ~ normal(0.0, 1.0);
-    sigma_att ~ cauchy(0.0, 0.1);
-    sigma_def ~ cauchy(0.0, 0.1);
+    sigma_att ~ exponential(1.0);
+    sigma_def ~ exponential(1.0);
     att ~ normal(0.0, sigma_att);
     def ~ normal(0.0, sigma_def);
     team_1_score ~ poisson_log(mu_offset + att[team_1_id] + def[team_2_id]);
