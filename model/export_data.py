@@ -34,8 +34,8 @@ def main():
     }
     with open(FILENAME["team_ids"].format(year), "w") as file:
         dump(team_ids, file)
-    df.team_id = df.team_id.map(team_ids)
-    df.opp_team_id = df.opp_team_id.map(team_ids)
+    for column in ["team_id", "opp_team_id"]:
+        df[column] = df[column].map(team_ids)
     # NOTE: We can create a `game_id` from the combination of the date and the
     # `id` values of the two teams.
     df.date = to_datetime(df.date, format=DATE_FORMAT)

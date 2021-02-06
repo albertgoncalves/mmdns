@@ -32,9 +32,9 @@ def set_hist(ax, x):
         "ls": "--",
     }
     m = median(x)
-    ax.axvline(m, label="median => {:.2f}".format(m), c="dodgerblue", **kwargs)
+    ax.axvline(m, label=f"median => {m:.2f}", c="dodgerblue", **kwargs)
     m = mean(x)
-    ax.axvline(m, label="mean   => {:.2f}".format(m), c="tomato", **kwargs)
+    ax.axvline(m, label=f"mean   => {m:.2f}", c="tomato", **kwargs)
     ax.legend(prop={"family": "monospace"})
 
 

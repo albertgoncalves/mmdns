@@ -100,19 +100,9 @@ def main():
         "linestyle": "--",
     }
     m = samples[columns["att"]].values.mean()
-    ax.axvline(
-        m,
-        label="att mean => {:.2f}".format(m),
-        c="dodgerblue",
-        **kwargs,
-    )
+    ax.axvline(m, label=f"att mean => {m:.2f}", c="dodgerblue", **kwargs)
     m = samples[columns["def"]].values.mean()
-    ax.axhline(
-        m,
-        label="def mean => {:.2f}".format(m),
-        c="tomato",
-        **kwargs,
-    )
+    ax.axhline(m, label=f"def mean => {m:.2f}", c="tomato", **kwargs)
     for (_, row) in params.iterrows():
         if row.team_id in TEAM_IDS[year]:
             ax.annotate(

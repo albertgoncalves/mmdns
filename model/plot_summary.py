@@ -19,13 +19,13 @@ FILENAME = {
 def plot(ax, samples, column):
     ax.set_title(column)
     ax.plot(samples[column], color="black", alpha=0.35)
-    x = median(samples[column])
     kwargs = {
         "ls": "--",
     }
-    ax.axhline(x, label="median => {:.2f}".format(x), c="dodgerblue", **kwargs)
+    x = median(samples[column])
+    ax.axhline(x, label=f"median => {x:.2f}", c="dodgerblue", **kwargs)
     x = mean(samples[column])
-    ax.axhline(x, label="mean   => {:.2f}".format(x), c="tomato", **kwargs)
+    ax.axhline(x, label=f"mean   => {x:.2f}", c="tomato", **kwargs)
     ax.legend(loc="lower right", prop={"family": "monospace"})
 
 
