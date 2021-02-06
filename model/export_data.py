@@ -21,7 +21,7 @@ def main():
     assert len(argv) == 2
     year = int(argv[1])
     df = read_csv(unpack.FILENAME["schedule"])
-    df = df.loc[(df.year == year) & (df.type == "REG")].copy()
+    df = df.loc[(df.year == year) & (df.type != "NCAA")].copy()
     # NOTE: If we don't have an `id` for `opp`, let's just purge it for now to
     # keep things simple.
     df = df.loc[df.opp_team_id.notnull()].copy()
