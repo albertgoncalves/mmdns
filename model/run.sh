@@ -83,7 +83,7 @@ export CXXFLAGS="${flags[*]}"
             "$WD/model/plot_summary.py" "$year"
             "$WD/model/plot_params.py" "$year"
             "$WD/model/plot_preds.py" "$year"
-            "$WD/model/plot_sims.py" "$year"
+            "$WD/model/print_sims.py" "$year" > "$WD/out/sims_$year.txt"
         ) &
     done
     wait
@@ -92,6 +92,6 @@ export CXXFLAGS="${flags[*]}"
         feh "$WD/out/summary_$year.png"
         feh "$WD/out/params_$year.png"
         feh "$WD/out/preds_$year.png"
-        feh "$WD/out/sims_$year.png"
+        less "$WD/out/sims_$year.txt"
     done
 )

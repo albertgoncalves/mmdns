@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 
-from collections import Counter
 from json import load
 from os import environ
 from os.path import join
-from sys import argv, stderr
+from sys import argv
 
-from matplotlib.pyplot import close, savefig, subplots, tight_layout
 from numpy import exp
 from numpy.random import default_rng
 from pandas import read_csv
@@ -18,8 +16,7 @@ import unpack
 FILENAME = {
     "sims": join(environ["WD"], "out", "sims_{}.png"),
 }
-COUNT_SIMS = 5000
-REMAINING = {
+BRACKET = {
     2017: [
         "villanova",
         "mount-st-marys",
@@ -221,63 +218,81 @@ REMAINING = {
 }
 
 
-def main():
-    assert len(argv) == 2
-    year = int(argv[1])
+def get_data(year):
     schedule = read_csv(unpack.FILENAME["schedule"])
     schedule = \
         schedule.loc[(schedule.year == year) & (schedule.type == "NCAA")]
-    for team_id in REMAINING[year]:
+    for team_id in BRACKET[year]:
         assert team_id in schedule.team_id.unique()
-    assert len(REMAINING[year]) == 64
-    assert len(set(REMAINING[year])) == 64
+    assert len(BRACKET[year]) == 64
+    assert len(set(BRACKET[year])) == 64
     with open(export_data.FILENAME["team_ids"].format(year), "r") as file:
         team_ids = load(file)
     samples = read_csv(
         plot_summary.FILENAME["samples"].format(year),
         low_memory=False,
     )
+    return (schedule, team_ids, samples)
+
+
+def sim(schedule, team_ids, samples, bracket):
     rng = default_rng()
-    sims = []
-    for (t, i) in enumerate(rng.integers(0, len(samples), COUNT_SIMS)):
-        print(f"\r{((t + 1) / COUNT_SIMS) * 100:>7.1f}%", end="", file=stderr)
-        sample = samples.iloc[i]
-        mu_offset = sample.mu_offset
-        remaining = REMAINING[year]
-        for _ in range(6):
-            winners = []
-            for j in range(0, len(remaining), 2):
-                team_1_id = remaining[j]
-                team_2_id = remaining[j + 1]
-                team_1_index = team_ids[team_1_id]
-                team_2_index = team_ids[team_2_id]
-                [team_1_score, team_2_score] = rng.poisson(exp([
-                    mu_offset +
-                    sample[f"att.{team_1_index}"] +
-                    sample[f"def.{team_2_index}"],
-                    mu_offset +
-                    sample[f"att.{team_2_index}"] +
-                    sample[f"def.{team_1_index}"],
-                ]))
-                if team_1_score == team_2_score:
-                    if rng.random() < 0.5:
-                        winners.append(team_1_id)
-                    else:
-                        winners.append(team_2_id)
-                elif team_2_score < team_1_score:
-                    winners.append(team_1_id)
+    mu_offset = samples.mu_offset
+    results = []
+    for _ in range(6):
+        n = len(bracket)
+        winners = {i: {} for i in range(0, n, 2)}
+        next_bracket = []
+        for i in range(0, n, 2):
+            team_1_id = bracket[i]
+            team_2_id = bracket[i + 1]
+            team_1_index = team_ids[team_1_id]
+            team_2_index = team_ids[team_2_id]
+            [team_1_score, team_2_score] = rng.poisson(exp([
+                mu_offset +
+                samples[f"att.{team_1_index}"] +
+                samples[f"def.{team_2_index}"],
+                mu_offset +
+                samples[f"att.{team_2_index}"] +
+                samples[f"def.{team_1_index}"],
+            ]))
+            team_1_wins = (team_2_score < team_1_score).sum()
+            team_2_wins = (team_1_score < team_2_score).sum()
+            if team_1_wins == team_2_wins:
+                if rng.random() < 0.5:
+                    team_1_wins += 1
                 else:
-                    winners.append(team_2_id)
-            remaining = winners
-        sims.append(remaining[0])
-    print("\n", end="", file=stderr)
-    (_, ax) = subplots(figsize=(6, 9))
-    ax.set_title(f"{COUNT_SIMS} simulations", family="monospace")
-    ax.barh(*zip(*Counter(sims).most_common()), color="dimgray")
-    ax.invert_yaxis()
-    tight_layout()
-    savefig(FILENAME["sims"].format(year))
-    close()
+                    team_2_wins += 1
+            m = team_1_wins + team_2_wins
+            winners[i][team_1_id] = team_1_wins / m
+            winners[i][team_2_id] = team_2_wins / m
+            if team_2_wins < team_1_wins:
+                next_bracket.append(team_1_id)
+            else:
+                next_bracket.append(team_2_id)
+        bracket = next_bracket
+        results.append(winners)
+    return results
+
+
+def main():
+    assert len(argv) == 2
+    year = int(argv[1])
+    (schedule, team_ids, samples) = get_data(year)
+    for results in sim(schedule, team_ids, samples, BRACKET[year]):
+        print("")
+        for result in results.values():
+            [(team_1_id, team_1_pct), (team_2_id, team_2_pct)] = result.items()
+            if team_2_pct < team_1_pct:
+                print(
+                    f"\t{team_1_id:>22}  {team_1_pct:.2f}  <|         "
+                    f"{team_2_id}",
+                )
+            else:
+                print(
+                    f"\t{team_1_id:>22}         |>  {team_2_pct:.2f}  "
+                    f"{team_2_id}",
+                )
 
 
 if __name__ == "__main__":
