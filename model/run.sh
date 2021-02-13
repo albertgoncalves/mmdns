@@ -71,7 +71,7 @@ export CXXFLAGS="${flags[*]}"
             "$WD/build/model" \
                 sample \
                 num_warmup=1000 \
-                num_samples=1000 \
+                num_samples=2500 \
                 data file="$WD/out/data_$year.json" \
                 output file="$WD/out/output_$year.csv"
             grep -v "#" "$WD/out/output_$year.csv" \
