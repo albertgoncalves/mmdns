@@ -216,6 +216,239 @@ BRACKET = {
         "abilene-christian",
     ],
 }
+WINNERS = {
+    2017: {
+        0: [
+            "villanova",
+            "wisonsin",
+            "virginia",
+            "florida",
+            "southern-california",
+            "baylor",
+            "south-carolina",
+            "duke",
+            "gonzaga",
+            "northwestern",
+            "notre-dame",
+            "west-virginia",
+            "xavier",
+            "florida-state",
+            "saint-marys-ca",
+            "arizona",
+            "kansas",
+            "michigan-state",
+            "iowa-state",
+            "purdue",
+            "rhode-island",
+            "oregon",
+            "michigan",
+            "louisville",
+            "north-carolina",
+            "arkansas",
+            "middle-tennessee",
+            "butler",
+            "cincinnati",
+            "ucla",
+            "wichita-state",
+            "kentucky",
+        ],
+        1: [
+            "wisonsin",
+            "florida",
+            "baylor",
+            "south-carolina",
+            "gonzaga",
+            "west-virginia",
+            "xavier",
+            "arizona",
+            "kansas",
+            "purdue",
+            "oregon",
+            "michigan",
+            "north-carolina",
+            "butler",
+            "ucla",
+            "kentucky",
+        ],
+        2: [
+            "florida",
+            "south-carolina",
+            "gonzaga",
+            "xavier",
+            "kansas",
+            "oregon",
+            "north-carolina",
+            "kentucky",
+        ],
+        3: [
+            "south-carolina",
+            "gonzaga",
+            "oregon",
+            "north-carolina",
+        ],
+        4: [
+            "gonzaga",
+            "north-carolina",
+        ],
+        5: [
+            "north-carolina",
+        ],
+    },
+    2018: {
+        0: [
+            "maryland-baltimore-county",
+            "kansas-state",
+            "kentucky",
+            "buffalo",
+            "loyola-il",
+            "tennessee",
+            "nevada",
+            "cincinnati",
+            "xavier",
+            "florida-state",
+            "ohio-state",
+            "gonzaga",
+            "houston",
+            "michigan",
+            "texas-am",
+            "north-carolina",
+            "villanova",
+            "alabama",
+            "west-virginia",
+            "marshall",
+            "florida",
+            "texas-tech",
+            "butler",
+            "purdue",
+            "kansas",
+            "seton-hall",
+            "clemson",
+            "auburn",
+            "syracuse",
+            "michigan-state",
+            "rhode-island",
+            "duke",
+        ],
+        1: [
+            "kansas-state",
+            "kentucky",
+            "loyola-il",
+            "nevada",
+            "florida-state",
+            "gonzaga",
+            "michigan",
+            "texas-am",
+            "villanova",
+            "west-virginia",
+            "texas-tech",
+            "purdue",
+            "kansas",
+            "clemson",
+            "syracuse",
+            "duke",
+        ],
+        2: [
+            "kansas-state",
+            "loyola-il",
+            "florida-state",
+            "michigan",
+            "villanova",
+            "texas-tech",
+            "kansas",
+            "duke",
+        ],
+        3: [
+            "loyola-il",
+            "michigan",
+            "villanova",
+            "kansas",
+        ],
+        4: [
+            "michigan",
+            "villanova",
+        ],
+        5: [
+            "villanova",
+        ],
+    },
+    2019: {
+        0: [
+            "duke",
+            "central-florida",
+            "liberty",
+            "virginia-tech",
+            "maryland",
+            "louisiana-state",
+            "minnesota",
+            "michigan-state",
+            "gonzaga",
+            "baylor",
+            "murray-state",
+            "florida-state",
+            "buffalo",
+            "texas-tech",
+            "florida",
+            "michigan",
+            "virginia",
+            "oklahoma",
+            "oregon",
+            "california-irvine",
+            "villanova",
+            "purdue",
+            "iowa",
+            "tennessee",
+            "north-carolina",
+            "washington",
+            "auburn",
+            "kansas",
+            "ohio-state",
+            "houston",
+            "wofford",
+            "kentucky",
+        ],
+        1: [
+            "duke",
+            "virginia-tech",
+            "louisiana-state",
+            "michigan-state",
+            "gonzaga",
+            "florida-state",
+            "texas-tech",
+            "michigan",
+            "virginia",
+            "oregon",
+            "purdue",
+            "tennessee",
+            "north-carolina",
+            "auburn",
+            "houston",
+            "kentucky",
+        ],
+        2: [
+            "duke",
+            "michigan-state",
+            "gonzaga",
+            "texas-tech",
+            "virginia",
+            "purdue",
+            "auburn",
+            "kentucky",
+        ],
+        3: [
+            "michigan-state",
+            "texas-tech",
+            "virginia",
+            "auburn",
+        ],
+        4: [
+            "texas-tech",
+            "virginia",
+        ],
+        5: [
+            "virginia",
+        ],
+    }
+}
 
 
 def get_data(year):
@@ -279,20 +512,41 @@ def main():
     assert len(argv) == 2
     year = int(argv[1])
     (schedule, team_ids, samples) = get_data(year)
-    for results in sim(schedule, team_ids, samples, BRACKET[year]):
+    for (j, results) in enumerate(sim(
+        schedule,
+        team_ids,
+        samples,
+        BRACKET[year],
+    )):
+        winners = WINNERS[year][j]
+        correct = 0
         print("")
-        for result in results.values():
+        for (i, result) in enumerate(results.values()):
             [(team_1_id, team_1_pct), (team_2_id, team_2_pct)] = result.items()
+            assert team_1_pct != team_2_pct
+            winner = winners[i]
             if team_2_pct < team_1_pct:
+                predicted = team_1_id
                 print(
-                    f"\t{team_1_id:>22}  {team_1_pct:.2f}  <|         "
-                    f"{team_2_id}",
+                    f"{team_1_id:>26}  {team_1_pct:.2f}  <|         "
+                    f"{team_2_id:<26}",
+                    end="",
                 )
             else:
+                predicted = team_2_id
                 print(
-                    f"\t{team_1_id:>22}         |>  {team_2_pct:.2f}  "
-                    f"{team_2_id}",
+                    f"{team_1_id:>26}         |>  {team_2_pct:.2f}  "
+                    f"{team_2_id:<26}",
+                    end="",
                 )
+            if predicted == winner:
+                correct += 1
+                print("")
+            else:
+                print(f"... wrong! ({winner})")
+        total = len(winners)
+        print(f"\n  {correct} out of {total} ~ {correct / total:.2f}")
+        print("=" * 79)
 
 
 if __name__ == "__main__":
