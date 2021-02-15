@@ -44,10 +44,7 @@ done
                 > "$wd/out/samples_$year.csv"
             "$WD/cmdstan/bin/stansummary" "$wd/out/output_$year.csv" \
                 > "$wd/out/summary_$year.txt"
-            "$wd/plot_summary.py" "$year"
-            "$wd/plot_params.py" "$year"
-            "$wd/plot_preds.py" "$year"
-            "$wd/print_sims.py" "$year" > "$wd/out/sims_$year.txt"
+            "$wd/postlude.py" "$year" > "$wd/out/sims_$year.txt"
         ) &
     done
     wait

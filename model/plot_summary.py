@@ -29,10 +29,7 @@ def plot(ax, samples, column):
     ax.legend(loc="lower right", prop={"family": "monospace"})
 
 
-def main():
-    assert len(argv) == 2
-    year = int(argv[1])
-    samples = read_csv(FILENAME["samples"].format(year), low_memory=False)
+def run(year, samples):
     n = 20
     w = 4
     h = ceil(n / w)
@@ -60,6 +57,12 @@ def main():
     tight_layout()
     savefig(FILENAME["summary"].format(year))
     close()
+
+
+def main():
+    assert len(argv) == 2
+    year = int(argv[1])
+    run(year, read_csv(FILENAME["samples"].format(year), low_memory=False))
 
 
 if __name__ == "__main__":

@@ -451,24 +451,7 @@ WINNERS = {
 }
 
 
-def get_data(year):
-    schedule = read_csv(unpack.FILENAME["schedule"])
-    schedule = \
-        schedule.loc[(schedule.year == year) & (schedule.type == "NCAA")]
-    for team_id in BRACKET[year]:
-        assert team_id in schedule.team_id.unique()
-    assert len(BRACKET[year]) == 64
-    assert len(set(BRACKET[year])) == 64
-    with open(export_data.FILENAME["team_ids"].format(year), "r") as file:
-        team_ids = load(file)
-    samples = read_csv(
-        plot_summary.FILENAME["samples"].format(year),
-        low_memory=False,
-    )
-    return (schedule, team_ids, samples)
-
-
-def sim(schedule, team_ids, samples, bracket):
+def sim(team_ids, samples, bracket):
     rng = default_rng()
     mu_offset = samples.mu_offset
     results = []
@@ -508,16 +491,12 @@ def sim(schedule, team_ids, samples, bracket):
     return results
 
 
-def main():
-    assert len(argv) == 2
-    year = int(argv[1])
-    (schedule, team_ids, samples) = get_data(year)
-    for (j, results) in enumerate(sim(
-        schedule,
-        team_ids,
-        samples,
-        BRACKET[year],
-    )):
+def run(year, schedule, team_ids, samples):
+    for team_id in BRACKET[year]:
+        assert team_id in schedule.team_id.unique()
+    assert len(BRACKET[year]) == 64
+    assert len(set(BRACKET[year])) == 64
+    for (j, results) in enumerate(sim(team_ids, samples, BRACKET[year])):
         winners = WINNERS[year][j]
         correct = 0
         print("")
@@ -549,6 +528,24 @@ def main():
         total = len(winners)
         print(f"\n  {correct} out of {total} ~ {correct / total:.2f}")
         print("=" * 79)
+
+
+def main():
+    assert len(argv) == 2
+    year = int(argv[1])
+    schedule = read_csv(unpack.FILENAME["schedule"])
+    with open(export_data.FILENAME["team_ids"].format(year), "r") as file:
+        team_ids = load(file)
+    samples = read_csv(
+        plot_summary.FILENAME["samples"].format(year),
+        low_memory=False,
+    )
+    run(
+        year,
+        schedule.loc[(schedule.year == year) & (schedule.type == "NCAA")],
+        team_ids,
+        samples,
+    )
 
 
 if __name__ == "__main__":

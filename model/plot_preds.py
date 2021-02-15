@@ -38,15 +38,7 @@ def set_hist(ax, x):
     ax.legend(prop={"family": "monospace"})
 
 
-def main():
-    assert len(argv) == 2
-    year = int(argv[1])
-    with open(export_data.FILENAME["data"].format(year), "r") as file:
-        data = load(file)
-    samples = read_csv(
-        plot_summary.FILENAME["samples"].format(year),
-        low_memory=False,
-    )
+def run(year, data, samples):
     i = randrange(0, len(samples))
     (_, axs) = subplots(2, 2, sharex=True, sharey=True, figsize=(18, 10))
     axs[0, 0].set_title("team_1")
@@ -66,6 +58,18 @@ def main():
     tight_layout()
     savefig(FILENAME["preds"].format(year))
     close()
+
+
+def main():
+    assert len(argv) == 2
+    year = int(argv[1])
+    with open(export_data.FILENAME["data"].format(year), "r") as file:
+        data = load(file)
+    samples = read_csv(
+        plot_summary.FILENAME["samples"].format(year),
+        low_memory=False,
+    )
+    run(year, data, samples)
 
 
 if __name__ == "__main__":

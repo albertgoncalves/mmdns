@@ -17,15 +17,7 @@ FILENAME = {
 }
 
 
-def main():
-    assert len(argv) == 2
-    year = int(argv[1])
-    with open(export_data.FILENAME["team_ids"].format(year), "r") as file:
-        team_ids = {value: key for (key, value) in load(file).items()}
-    samples = read_csv(
-        plot_summary.FILENAME["samples"].format(year),
-        low_memory=False,
-    )
+def run(year, team_ids, samples):
     params = {}
     columns = {
         "att": list(filter(lambda x: x.startswith("att."), samples.columns)),
@@ -105,6 +97,18 @@ def main():
     tight_layout()
     savefig(FILENAME["params"].format(year))
     close()
+
+
+def main():
+    assert len(argv) == 2
+    year = int(argv[1])
+    with open(export_data.FILENAME["team_ids"].format(year), "r") as file:
+        team_ids = load(file)
+    samples = read_csv(
+        plot_summary.FILENAME["samples"].format(year),
+        low_memory=False,
+    )
+    run(year, {value: key for (key, value) in team_ids.items()}, samples)
 
 
 if __name__ == "__main__":
