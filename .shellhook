@@ -3,11 +3,5 @@
 export WD=$PWD
 export PYTHONPATH="$PYTHONPATH:$WD/scripts"
 
-for x in build out; do
-    if [ ! -d "$WD/$x" ]; then
-        mkdir "$WD/$x"
-    fi
-done
-
 alias csvlook="csvlook --no-inference"
 alias shellcheck="shellcheck -e SC1090"

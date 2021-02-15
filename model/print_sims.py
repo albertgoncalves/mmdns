@@ -14,7 +14,7 @@ import plot_summary
 import unpack
 
 FILENAME = {
-    "sims": join(environ["WD"], "out", "sims_{}.png"),
+    "sims": join(environ["WD"], "model", "out", "sims_{}.png"),
 }
 BRACKET = {
     2017: [

@@ -15,7 +15,7 @@ import export_data
 import plot_summary
 
 FILENAME = {
-    "preds": join(environ["WD"], "out", "preds_{}.png"),
+    "preds": join(environ["WD"], "model", "out", "preds_{}.png"),
 }
 
 

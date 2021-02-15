@@ -12,8 +12,8 @@ import unpack
 
 DATE_FORMAT = "%Y-%m-%d"
 FILENAME = {
-    "team_ids": join(environ["WD"], "out", "team_ids_{}.json"),
-    "data": join(environ["WD"], "out", "data_{}.json"),
+    "team_ids": join(environ["WD"], "model", "out", "team_ids_{}.json"),
+    "data": join(environ["WD"], "model", "out", "data_{}.json"),
 }
 
 

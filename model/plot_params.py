@@ -13,7 +13,7 @@ import plot_summary
 import print_sims
 
 FILENAME = {
-    "params": join(environ["WD"], "out", "params_{}.png"),
+    "params": join(environ["WD"], "model", "out", "params_{}.png"),
 }
 
 

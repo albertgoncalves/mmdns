@@ -11,8 +11,8 @@ from numpy import mean, median
 from pandas import read_csv
 
 FILENAME = {
-    "samples": join(environ["WD"], "out", "samples_{}.csv"),
-    "summary": join(environ["WD"], "out", "summary_{}.png"),
+    "samples": join(environ["WD"], "model", "out", "samples_{}.csv"),
+    "summary": join(environ["WD"], "model", "out", "summary_{}.png"),
 }
 
 
