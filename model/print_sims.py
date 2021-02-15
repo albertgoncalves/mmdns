@@ -220,7 +220,7 @@ WINNERS = {
     2017: {
         0: [
             "villanova",
-            "wisonsin",
+            "wisconsin",
             "virginia",
             "florida",
             "southern-california",
@@ -253,7 +253,7 @@ WINNERS = {
             "kentucky",
         ],
         1: [
-            "wisonsin",
+            "wisconsin",
             "florida",
             "baylor",
             "south-carolina",
@@ -525,6 +525,8 @@ def main():
             [(team_1_id, team_1_pct), (team_2_id, team_2_pct)] = result.items()
             assert team_1_pct != team_2_pct
             winner = winners[i]
+            if j == 0:
+                assert winner in [team_1_id, team_2_id]
             if team_2_pct < team_1_pct:
                 predicted = team_1_id
                 print(
