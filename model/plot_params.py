@@ -10,41 +10,10 @@ from pandas import DataFrame, read_csv
 
 import export_data
 import plot_summary
+import print_sims
 
 FILENAME = {
     "params": join(environ["WD"], "out", "params_{}.png"),
-}
-TEAM_IDS = {
-    2017: [
-        "florida",
-        "gonzaga",
-        "kansas",
-        "kentucky",
-        "north-carolina",
-        "oregon",
-        "south-carolina",
-        "xavier",
-    ],
-    2018: [
-        "duke",
-        "florida-state",
-        "kansas",
-        "kansas-state",
-        "loyola-il",
-        "michigan",
-        "texas-tech",
-        "villanova",
-    ],
-    2019: [
-        "auburn",
-        "duke",
-        "gonzaga",
-        "kentucky",
-        "michigan-state",
-        "purdue",
-        "texas-tech",
-        "virginia",
-    ],
 }
 
 
@@ -78,7 +47,7 @@ def main():
         "index": "team_id",
     }, inplace=True)
     (_, ax) = subplots(figsize=(10, 10))
-    rows = params.team_id.isin(TEAM_IDS[year])
+    rows = params.team_id.isin(print_sims.WINNERS[year][2])
     ax.scatter(
         params.loc[rows].att_mean,
         params.loc[rows].def_mean,
@@ -104,7 +73,7 @@ def main():
     m = samples[columns["def"]].values.mean()
     ax.axhline(m, label=f"def mean => {m:.2f}", c="tomato", **kwargs)
     for (_, row) in params.iterrows():
-        if row.team_id in TEAM_IDS[year]:
+        if row.team_id in print_sims.WINNERS[year][2]:
             ax.annotate(
                 row.team_id,
                 (row.att_mean, row.def_mean),
