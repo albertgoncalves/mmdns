@@ -20,11 +20,13 @@ def main():
         team_ids = load(file)
     with open(export_data.FILENAME["data"].format(year), "r") as file:
         data = load(file)
-    samples = read_csv(
-        plot_summary.FILENAME["samples"].format(year),
-        low_memory=False,
-    )
-    schedule = read_csv(unpack.FILENAME["schedule"])
+    kwargs = {
+        "compression": None,
+        "low_memory": False,
+        "memory_map": True,
+    }
+    schedule = read_csv(unpack.FILENAME["schedule"], **kwargs)
+    samples = read_csv(plot_summary.FILENAME["samples"].format(year), **kwargs)
     plot_summary.run(year, samples)
     plot_params.run(
         year,

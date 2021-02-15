@@ -62,7 +62,13 @@ def run(year, samples):
 def main():
     assert len(argv) == 2
     year = int(argv[1])
-    run(year, read_csv(FILENAME["samples"].format(year), low_memory=False))
+    samples = read_csv(
+        FILENAME["samples"].format(year),
+        compression=None,
+        low_memory=False,
+        memory_map=True,
+    )
+    run(year, samples)
 
 
 if __name__ == "__main__":

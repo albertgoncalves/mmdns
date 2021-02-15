@@ -67,7 +67,9 @@ def main():
         data = load(file)
     samples = read_csv(
         plot_summary.FILENAME["samples"].format(year),
+        compression=None,
         low_memory=False,
+        memory_map=True,
     )
     run(year, data, samples)
 

@@ -533,13 +533,15 @@ def run(year, schedule, team_ids, samples):
 def main():
     assert len(argv) == 2
     year = int(argv[1])
-    schedule = read_csv(unpack.FILENAME["schedule"])
     with open(export_data.FILENAME["team_ids"].format(year), "r") as file:
         team_ids = load(file)
-    samples = read_csv(
-        plot_summary.FILENAME["samples"].format(year),
-        low_memory=False,
-    )
+    kwargs = {
+        "compression": None,
+        "low_memory": False,
+        "memory_map": True,
+    }
+    schedule = read_csv(unpack.FILENAME["schedule"], **kwargs)
+    samples = read_csv(plot_summary.FILENAME["samples"].format(year), **kwargs)
     run(
         year,
         schedule.loc[(schedule.year == year) & (schedule.type == "NCAA")],
