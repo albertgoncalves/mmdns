@@ -2,51 +2,10 @@
 
 set -eu
 
-if [ ! -d "$WD/cmdstan" ]; then
-    (
-        cd "$WD"
-        git clone https://github.com/stan-dev/cmdstan.git --recursive
-        cd "$WD/cmdstan"
-        make build
-    )
-fi
 
-flags=(
-    "-march=native"
-    "-O3"
-    "-Wall"
-    "-Wcast-align"
-    "-Wcast-qual"
-    "-Wdate-time"
-    "-Wduplicated-cond"
-    "-Werror"
-    "-Wextra"
-    "-Wfatal-errors"
-    "-Wformat=2"
-    "-Wformat-signedness"
-    "-Wlogical-op"
-    "-Wmissing-include-dirs"
-    "-Wno-analyzer-possible-null-argument"
-    "-Wno-deprecated-copy"
-    "-Wno-ignored-qualifiers"
-    "-Wno-type-limits"
-    "-Wno-unused-but-set-variable"
-    "-Wno-unused-function"
-    "-Wno-unused-local-typedefs"
-    "-Wno-unused-parameter"
-    "-Wno-unused-variable"
-    "-Wnull-dereference"
-    "-Wpacked"
-    "-Wpointer-arith"
-    "-Wredundant-decls"
-    "-Wstack-protector"
-    "-Wswitch-enum"
-    "-Wtrampolines"
-    "-Wwrite-strings"
-)
-export CXXFLAGS="${flags[*]}"
 
 (
+    "$WD/scripts/install_cmdstan.sh"
     if ! cmp -s "$WD/model/model.stan" "$WD/build/model.stan"; then
         cp "$WD/model/model.stan" "$WD/build"
         "$WD/cmdstan/bin/stanc" \
@@ -56,6 +15,7 @@ export CXXFLAGS="${flags[*]}"
     fi
 )
 (
+    . "$WD/scripts/build_flags.sh"
     cd "$WD/cmdstan"
     make "$WD/build/model"
 )

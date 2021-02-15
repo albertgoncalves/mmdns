@@ -10,3 +10,4 @@ for x in build out; do
 done
 
 alias csvlook="csvlook --no-inference"
+alias shellcheck="shellcheck -e SC1090"
